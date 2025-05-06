@@ -1,31 +1,30 @@
 // test-shop-redact.js
-import fetch from "node-fetch";
-import crypto from "crypto";
 
-const url = "http://localhost:3003/api/webhooks/shop/redact"; // שנה לפי הצורך
+const axios = require("axios");
+const crypto = require("crypto");
 
-const payload = {
-  shop_domain: "example-shop.myshopify.com"
+const body = {
+  shop_domain: "test-shop.myshopify.com", // ← ודא שזה אותו דומיין כמו בטבלת profiles וב־projects
 };
 
-const secret = "55b9eac15b147b114cc723529082500a"; // שים את ה־Shopify Webhook Secret שלך
+const secret = process.env.SHOPIFY_WEBHOOK_SECRET || "1111111111111111111111111111"; // ← ודא שזה הסוד כמו בהגדרות שלך
+const rawBody = JSON.stringify(body);
 
-const body = JSON.stringify(payload);
 const hmac = crypto
   .createHmac("sha256", secret)
-  .update(body, "utf8")
+  .update(rawBody, "utf8")
   .digest("base64");
 
-const headers = {
-  "Content-Type": "application/json",
-  "X-Shopify-Hmac-Sha256": hmac,
-};
-
-fetch(url, {
-  method: "POST",
-  headers,
-  body,
-})
-  .then((res) => res.json().then(data => ({ status: res.status, data })))
-  .then(console.log)
-  .catch(console.error);
+axios
+  .post("http://localhost:3003/api/webhooks/shop/redact", rawBody, {
+    headers: {
+      "X-Shopify-Hmac-Sha256": hmac,
+      "Content-Type": "application/json",
+    },
+  })
+  .then((res) => {
+    console.log("✅ Response:", res.status, res.data);
+  })
+  .catch((err) => {
+    console.error("❌ Error:", err.response?.status, err.response?.data);
+  });
