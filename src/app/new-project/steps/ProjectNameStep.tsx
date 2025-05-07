@@ -1,12 +1,14 @@
 "use client"
 
 import { useState } from "react"
-import { supabase } from "@/app/lib/supabaseClient"
+import { supabase } from "lib/supabaseClient"
 import { Input } from "@/components/ui/input"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent } from "@/components/ui/card"
+import WizardHeader from "components/WizardHeader"
 
-export default function ProjectNameStep() {
+
+export default function ProjectNamePage() {
   const [projectName, setProjectName] = useState("")
   const [message, setMessage] = useState("")
   const [loading, setLoading] = useState(false)
@@ -41,20 +43,24 @@ export default function ProjectNameStep() {
   }
 
   return (
-    <Card className="max-w-md mx-auto mt-8">
-      <CardContent>
-        <form onSubmit={handleSubmit} className="space-y-4">
-          <Input
-            placeholder="Enter your project name"
-            value={projectName}
-            onChange={(e) => setProjectName(e.target.value)}
-          />
-          <Button type="submit" disabled={loading}>
-            {loading ? "Saving..." : "Save project"}
-          </Button>
-          {message && <p className="text-sm text-center text-red-500">{message}</p>}
-        </form>
-      </CardContent>
-    </Card>
+    <>
+      <WizardHeader current="Project Name" />
+
+      <Card className="max-w-md mx-auto mt-8">
+        <CardContent>
+          <form onSubmit={handleSubmit} className="space-y-4">
+            <Input
+              placeholder="Enter your project name"
+              value={projectName}
+              onChange={(e) => setProjectName(e.target.value)}
+            />
+            <Button type="submit" disabled={loading}>
+              {loading ? "Saving..." : "Save project"}
+            </Button>
+            {message && <p className="text-sm text-center text-red-500">{message}</p>}
+          </form>
+        </CardContent>
+      </Card>
+    </>
   )
 }

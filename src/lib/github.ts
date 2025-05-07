@@ -1,4 +1,4 @@
-import { supabase } from "@/app/lib/supabaseClient"
+import { supabase } from "lib/supabaseClient"
 
 /**
  * מחזירה את שם המשתמש (login) של חשבון GitHub שמחובר למשתמש הנוכחי.
