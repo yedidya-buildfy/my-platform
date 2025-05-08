@@ -1,27 +1,44 @@
 "use client"
 
 import { useEffect, useState } from "react"
+import { supabase } from "lib/supabaseClient"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent } from "@/components/ui/card"
 import { CheckCircle2, Github } from "lucide-react"
-import { isGitHubConnected } from "@/lib/github"
 
 export default function GitHubConnectStep({ onNext }: { onNext: () => void }) {
   const [loading, setLoading] = useState(true)
   const [connected, setConnected] = useState(false)
 
   useEffect(() => {
-    const checkConnection = async () => {
+    const checkGitHubConnection = async () => {
       setLoading(true)
-      const connected = await isGitHubConnected()
-      setConnected(connected)
-      if (connected) {
-        onNext()
+
+      const {
+        data: { user },
+        error: userError,
+      } = await supabase.auth.getUser()
+
+      if (userError || !user) {
+        setLoading(false)
+        return
       }
+
+      const { data, error } = await supabase
+        .from("profiles")
+        .select("github_token")
+        .eq("id", user.id)
+        .single()
+
+      if (!error && data?.github_token) {
+        setConnected(true)
+        onNext() // מדלג על השלב אם כבר מחובר
+      }
+
       setLoading(false)
     }
 
-    checkConnection()
+    checkGitHubConnection()
   }, [onNext])
 
   const handleGitHubConnect = () => {

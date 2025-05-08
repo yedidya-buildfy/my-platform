@@ -2,7 +2,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { supabase } from "@/app/lib/supabaseClient";
+import { supabase } from "lib/supabaseClient"
 
 interface Project {
   id: string;
@@ -33,8 +33,14 @@ export default function DashboardHome() {
   }, []);
 
   return (
-    <div>
-      <h1 className="text-2xl font-semibold mb-4">הפרויקטים שלך</h1>
+    <div className="p-6">
+      <div className="flex items-center justify-between mb-4">
+        <h1 className="text-2xl font-semibold">הפרויקטים שלך</h1>
+        <a href="/new-project/project-name" className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 transition">
+          + צור אפליקציה חדשה
+        </a>
+      </div>
+  
       {loading ? (
         <p>טוען פרויקטים...</p>
       ) : projects.length === 0 ? (
@@ -54,5 +60,5 @@ export default function DashboardHome() {
         </ul>
       )}
     </div>
-  );
+  );  
 }
